@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h4 class="text-center">Age Calculate</h4>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="number" name="date" id="date" class="form-control" placeholder="dd" required min="1" max="31" maxlength="2" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2)" />
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="month" class="form-label">Month</label>
+                <input type="number" name="month" id="month" class="form-control" placeholder="mm" required min="1" max="12" maxlength="2" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2)" />
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="year" class="form-label">Year</label>
+                <input type="number" name="year" id="year" class="form-control" placeholder="yyyy" required min="1900" max="2100" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)" />
+            </div>
+        </div>
+        <div class="text-center">
+            <input type="button" name="submit" value="Calculate Age" class="btn btn-primary" onclick="age()" />
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+        function age() {
+            var d1 = parseInt(document.getElementById('date').value);
+            var m1 = parseInt(document.getElementById('month').value);
+            var y1 = parseInt(document.getElementById('year').value);
+
+            // Basic validation for date, month, and year
+            if (!d1 || !m1 || !y1 || d1 < 1 || m1 < 1 || y1 < 1900 || d1 > 31 || m1 > 12) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Please enter valid date (1-31), month (1-12), and year (>= 1900).',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return; // Stop further execution
+            }
+
+            var date = new Date();
+            var d2 = date.getDate();
+            var m2 = 1 + date.getMonth();
+            var y2 = date.getFullYear();
+            var month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+            // Check for leap year and adjust February
+            if ((y1 % 4 === 0 && y1 % 100 !== 0) || (y1 % 400 === 0)) {
+                month[1] = 29;
+            }
+
+            // Adjust for date overflow
+            if (d1 > month[m1 - 1]) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Please enter a valid day for the selected month.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return; // Stop further execution
+            }
+
+            if (d1 > d2) {
+                d2 += month[m2 - 1];
+                m2 -= 1;
+            }
+            if (m1 > m2) {
+                m2 += 12;
+                y2 -= 1;
+            }
+            var d = d2 - d1;
+            var m = m2 - m1;
+            var y = y2 - y1;
+
+            // Display the result using SweetAlert
+            Swal.fire({
+                title: 'Your Age',
+                text: `You are ${y} Years ${m} Months ${d} Days old.`,
+                icon: 'info',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                // Clear input fields after displaying the result
+                document.getElementById('date').value = '';
+                document.getElementById('month').value = '';
+                document.getElementById('year').value = '';
+            });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
